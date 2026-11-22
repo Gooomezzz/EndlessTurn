@@ -442,8 +442,8 @@ function hqWant(){return(lobby||!$('overlay').classList.contains('hidden'))?pv:c
 function hqFree(id){const p=pbr[id];if(!p)return;p.dead=1;if(p.vb)gl.deleteBuffer(p.vb);if(p.ib)gl.deleteBuffer(p.ib);for(const t of p.tex||[])gl.deleteTexture(t);delete pbr[id]}
 const hqLbl=document.createElement('div');hqLbl.textContent='CARGANDO TEXTURAS HD…';hqLbl.style.cssText='position:fixed;left:50%;top:46%;transform:translate(-50%,-50%);font:700 12px sans-serif;letter-spacing:.22em;color:#5ef2e0;pointer-events:none;z-index:5;display:none;text-shadow:0 0 12px #000';document.body.appendChild(hqLbl);
 function hqHold(id,al,hv){if(hv!==1||!HQ.on||!SET.hd||!(lobby||ovS))return false;if(al!==undefined&&al<=.97)return false;const p=pbr[id];return !p||(!p.ready&&!p.fail)}
-function hqLabel(id){const p=pbr[id],on=HQ.on&&SET.hd&&(lobby||ovS)&&(!p||(!p.ready&&!p.fail));hqLbl.style.display=on?'block':'none'}
-const hqWarmed={};function hqWarm(){if(!lobby)return;const i=CARS.findIndex(c=>c.id===pv);for(const d of[1,-1]){const c=CARS[(i+d+CARS.length)%CARS.length];if(c&&!hqWarmed[c.id]&&FILES[c.id]){hqWarmed[c.id]=1;fetch(DIR+FILES[c.id]).then(r=>r.arrayBuffer()).catch(()=>{})}}}
+function hqLabel(id){const sc=CARS.find(x=>x.id===id);if(sc&&isSec(sc)){hqLbl.style.display='none';return}const p=pbr[id],on=HQ.on&&SET.hd&&(lobby||ovS)&&(!p||(!p.ready&&!p.fail));hqLbl.style.display=on?'block':'none'}
+const hqWarmed={};function hqWarm(){if(!lobby)return;const i=CARS.findIndex(c=>c.id===pv);for(const d of[1,-1]){const c=CARS[(i+d+CARS.length)%CARS.length];if(c&&!isSec(c)&&!hqWarmed[c.id]&&FILES[c.id]){hqWarmed[c.id]=1;fetch(DIR+FILES[c.id]).then(r=>r.arrayBuffer()).catch(()=>{})}}}
 function hqTotal(){let t=0;for(const k in pbr)t+=pbr[k].bytes||0;return t}
 const hqBud=()=>[350,800,1100,1600][SET.q|0]*1048576;
 function hqTick(){if(!HQ.on||!SET.hd)return;const want=hqWant(),now=performance.now(),keep=new Set([want,cur,pv]);for(const e of mdraw)if(e[6]===2)keep.add(e[0]);
@@ -697,7 +697,7 @@ const CARS=[
 {id:'bugatti_chiron',n:'Bugatti Chiron',hp:1500,top:420,price:30000,max:340,bmax:390,acc:2,mult:4},
 {id:'koenigsegg_jesko',n:'Koenigsegg Jesko',hp:1600,top:482,price:45000,max:352,bmax:405,acc:2.15,mult:4.6},
 {id:'ssc_tuatara',n:'SSC Tuatara Striker',hp:1750,top:455,price:80000,max:368,bmax:425,acc:2.3,mult:5.5,sec:1}];
-const DIR='https://huggingface.co/gerardgomez1734/coches/resolve/main/';/* carpeta con los .glb originales (sin optimizar) */
+const DIR='coches/';/* carpeta con los .glb originales (sin optimizar) */
 const FILES={porsche_gt3_rs:'porsche_gt3_rs.glb',ford_gt:'2017_ford_gt_heritage_edition.glb',lamborghini_svj:'aventador_svj_black-ghosttm_1.glb',mclaren_p1:'mclaren_p1__www_vecarz_com.glb',ferrari_sf90_xx:'ferrari_sf90_xx__www_vecarz_com_1.glb',koenigsegg_agera_rs:'koenigsegg_agera_rs_1.glb',bugatti_chiron:'2016_bugatti_chiron.glb',lotus_emira_gt4:'2021_lotus_emira_gt4_concept.glb',toyota_supra_varis:'2020_varis_supreme_a90__a91_toyota_gr_supra.glb',porsche_718_spyder_rs:'2024_porsche_718_spyder_rs.glb',chevrolet_corvette_c8:'2020_chevrolet_corvette_c8_stingray_convertible.glb',bmw_m3_touring:'2023_bmw_m3_competition_xdrive_touring.glb',audi_rs6_avant:'2020_audi_rs6_avant.glb',ford_mustang_gt500:'ford_mustang_shelby_gt500.glb',mercedes_amg_gt_bs:'mercedes-benz_amg_gt_black_series.glb',saleen_s7_tt:'saleen_s7_twin_turbo_2005__www_vecarz_com.glb',pagani_huayra_bc:'pagani_huayra_bc.glb',apollo_ie:'2017-2020_apollo_intensa_emozione.glb',porsche_918_spyder:'porsche_918_spyder_2015__www_vecarz_com.glb',mclaren_senna_gtr:'2020_mclaren_senna_gtr.glb',ferrari_laferrari:'2014_ferrari_laferrari.glb',mercedes_amg_one:'2023_mercedes-benz_amg_one.glb',bugatti_veyron_ss:'2010_bugatti_veyron_16_4_super_sport_431_kmh.glb',koenigsegg_jesko:'koenigsegg_jesko_black_2020_free.glb',ssc_tuatara:'2023_ssc_tuatara_striker.glb'};
 const models={},mdraw=[],LEN=6.45,TS=512;let CS=CARS[0],pv=cur,chain=Promise.resolve();
 /*PAINT-START*/
@@ -797,7 +797,7 @@ const rows=[['h','Tono',-30,30],['s','Saturación',-100,100],['l','Luminosidad',
 return`<div class="ptune"><div class="pth"><span>AJUSTE FINO</span><button data-l="ptreset">Restablecer</button></div>${rows}<small class="ptn">Brillo 0% = pintura mate · 100% = barniz brillante</small></div>`}
 function pApply(id,z,col){PCUR[id]=PCUR[id]||{};if(col)PCUR[id][z]=col;else delete PCUR[id][z];psave();delete TH[id];delete TF[id]}
 /* misiones de color: se comprueban mientras se conduce (desde chkAch) y al chocar */
-function carMisChk(){if(!run||dead||tut.on)return;if(!SEC&&maxSp>=400){SEC=true;try{localStorage.setItem('curvaSec','1')}catch(e){}const sc=CARS.find(c=>c.sec);if(sc){delete models[sc.id];load(sc.id,1)}say('🔓 COCHE SECRETO DESBLOQUEADO · MIRA EL GARAJE');AU.sfx('buy');renderG()}const m=CARMIS[cur];if(!m)return;for(const k of['s','g']){const q=m[k],v=q.v(),key=cur+':'+k;if(v>(CMP[key]||0))CMP[key]=v;if(!cmDone(cur,k)&&v>=q.g){CMD[cur]=CMD[cur]||{};CMD[cur][k]=1;const col=k==='s'?'slv':'gld',cn=CARS.find(c=>c.id===cur).n;PCOL[cur]=PCOL[cur]||[];if(!pHas(cur,col))PCOL[cur].push(col);say('COLOR '+(k==='s'?'PLATEADO':'DORADO')+' DESBLOQUEADO · '+cn.toUpperCase());AU.sfx('mission');runDone.push('Color '+(k==='s'?'plateado':'dorado')+' desbloqueado ('+cn+')');psave()}}}
+function carMisChk(){if(!run||dead||tut.on)return;if(!SEC&&maxSp>=400){SEC=true;try{localStorage.setItem('curvaSec','1')}catch(e){}const sc=CARS.find(c=>c.sec);if(sc){delete models[sc.id];const cm=models['cover:'+sc.id];if(cm){gl.deleteBuffer(cm.vb);gl.deleteBuffer(cm.ib);delete models['cover:'+sc.id]}freeSec(sc.id);delete TH[sc.id];delete TF[sc.id];load(sc.id,1)}say('🔓 COCHE SECRETO DESBLOQUEADO · MIRA EL GARAJE');AU.sfx('buy');renderG()}const m=CARMIS[cur];if(!m)return;for(const k of['s','g']){const q=m[k],v=q.v(),key=cur+':'+k;if(v>(CMP[key]||0))CMP[key]=v;if(!cmDone(cur,k)&&v>=q.g){CMD[cur]=CMD[cur]||{};CMD[cur][k]=1;const col=k==='s'?'slv':'gld',cn=CARS.find(c=>c.id===cur).n;PCOL[cur]=PCOL[cur]||[];if(!pHas(cur,col))PCOL[cur].push(col);say('COLOR '+(k==='s'?'PLATEADO':'DORADO')+' DESBLOQUEADO · '+cn.toUpperCase());AU.sfx('mission');runDone.push('Color '+(k==='s'?'plateado':'dorado')+' desbloqueado ('+cn+')');psave()}}}
 function paintHTML(c,o,eq){
 if(!zonesOf(c.id).some(z=>z[0]===pzone))pzone='b';
 const own=PCOL[c.id]||[],cu=PCUR[c.id]||{},cm=CARMIS[c.id]||{},sel=(PV.id===c.id&&PV.z===pzone&&PV.col)?PCOLS.find(x=>x.id===PV.col):null;
@@ -844,11 +844,55 @@ const sc=LEN/(mx[2]-mn[2]),cx=(mn[0]+mx[0])/2,cz=(mn[2]+mx[2])/2;for(let i=0;i<n
 if(rdl.length&&whl.length){const cen=[];for(const sx of[1,-1])for(const sz of[1,-1]){let y0=1e9,y1=-1e9,z0=1e9,z1=-1e9;for(const w of whl)for(let i=w.base;i<w.base+w.cnt;i++){const o=i*10;if((V[o]>=0?1:-1)===sx&&(V[o+2]>=0?1:-1)===sz){const y=V[o+1],z=V[o+2];if(y<y0)y0=y;if(y>y1)y1=y;if(z<z0)z0=z;if(z>z1)z1=z}}if(y1>y0)cen.push([(y0+y1)/2,(z0+z1)/2,Math.max(y1-y0,z1-z0)/2])}
 if(cen.length){const ZC={b:1,r:2,c:3,s:4},LU=i=>.299*V[i*10+3]+.587*V[i*10+4]+.114*V[i*10+5];for(const e of rdl){const qq=e.q,zi=ZC[qq.z],zo=ZC[qq.o]||0,vc=new Uint8Array(e.cnt),ms=[0,0,0,0,0],mn=[0,0,0,0,0];for(let k=0;k<e.cnt;k++){const i=e.base+k,o=i*10;let d=1e9;for(const c of cen){const t=Math.hypot(V[o+1]-c[0],V[o+2]-c[1])/c[2];if(t<d)d=t}const c=d<=qq.r?zi:zo;vc[k]=c;if(c){ms[c]+=LU(i);mn[c]++}}for(let k=0;k<e.cnt;k++){const c=vc[k];if(!c)continue;const i=e.base+k,av=ms[c]/mn[c];let sh=1;if(av>.02)sh=Math.max(.3,Math.min(1.7,LU(i)/av));V[i*10+9]=2+c*.1+.02+(sh-.3)*.05}}}}
 return{V,IB}}
+/* ================= COCHE SECRETO: funda (manta) sobre la silueta ================= */
+/* Toma la geometría real del coche (V: 10 floats por vértice, IB: índices) y genera una malla de tela
+   "drapeada": mapa de alturas de la silueta -> se ensancha (la tela no entra en los huecos) -> se suaviza ->
+   pliegues -> malla suave que cae hasta el suelo. Material 4 = mate, sin pintura ni reflejos. */
+const _hh=(i,j)=>{const h=Math.sin(i*127.1+j*311.7)*43758.5453;return h-Math.floor(h)};
+const _vn=(x,z)=>{const i=Math.floor(x),j=Math.floor(z),fx=x-i,fz=z-j,u=fx*fx*(3-2*fx),v=fz*fz*(3-2*fz),a=_hh(i,j),b=_hh(i+1,j),c=_hh(i,j+1),d=_hh(i+1,j+1);return(a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v)*2-1};
+function buildCover(V,IB){
+const nv=V.length/10;let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;
+for(let i=0;i<nv;i++){const x=V[i*10],z=V[i*10+2];if(x<x0)x0=x;if(x>x1)x1=x;if(z<z0)z0=z;if(z>z1)z1=z}
+const S=.04;x0-=.6;x1+=.6;z0-=.6;z1+=.6;
+const NX=Math.ceil((x1-x0)/S)+1,NZ=Math.ceil((z1-z0)/S)+1,N=NX*NZ,H=new Float32Array(N);
+/* 1) altura máxima del coche sobre cada nodo de la rejilla (vértices + triángulos grandes) */
+for(let i=0;i<nv;i++){const o=i*10,j=Math.round((V[o]-x0)/S),k=Math.round((V[o+2]-z0)/S),q=k*NX+j;if(V[o+1]>H[q])H[q]=V[o+1]}
+for(let t=0;t<IB.length;t+=3){const a=IB[t]*10,b=IB[t+1]*10,c=IB[t+2]*10;
+const ax=(V[a]-x0)/S,az=(V[a+2]-z0)/S,ay=V[a+1],bx=(V[b]-x0)/S,bz=(V[b+2]-z0)/S,by=V[b+1],cx=(V[c]-x0)/S,cz=(V[c+2]-z0)/S,cy=V[c+1];
+const j0=Math.max(0,Math.ceil(Math.min(ax,bx,cx))),j1=Math.min(NX-1,Math.floor(Math.max(ax,bx,cx))),k0=Math.max(0,Math.ceil(Math.min(az,bz,cz))),k1=Math.min(NZ-1,Math.floor(Math.max(az,bz,cz)));
+if(j1<j0||k1<k0)continue;const den=(bz-cz)*(ax-cx)+(cx-bx)*(az-cz);if(Math.abs(den)<1e-12)continue;
+for(let k=k0;k<=k1;k++)for(let j=j0;j<=j1;j++){const l1=((bz-cz)*(j-cx)+(cx-bx)*(k-cz))/den,l2=((cz-az)*(j-cx)+(ax-cx)*(k-cz))/den,l3=1-l1-l2;if(l1<0||l2<0||l3<0)continue;const y=l1*ay+l2*by+l3*cy;if(y>H[k*NX+j])H[k*NX+j]=y}}
+/* 2) filtros separables: máximo (la tela puentea huecos) y media (suaviza) */
+const flt=(A,r,mean)=>{const T=new Float32Array(N),O=new Float32Array(N);
+for(let k=0;k<NZ;k++)for(let j=0;j<NX;j++){let m=mean?0:-1e9;for(let d=-r;d<=r;d++){const jj=j+d;if(jj<0||jj>=NX){if(!mean&&0>m)m=0;continue}const v=A[k*NX+jj];if(mean)m+=v;else if(v>m)m=v}T[k*NX+j]=mean?m/(2*r+1):m}
+for(let k=0;k<NZ;k++)for(let j=0;j<NX;j++){let m=mean?0:-1e9;for(let d=-r;d<=r;d++){const kk=k+d;if(kk<0||kk>=NZ){if(!mean&&0>m)m=0;continue}const v=T[kk*NX+j];if(mean)m+=v;else if(v>m)m=v}O[k*NX+j]=mean?m/(2*r+1):m}
+return O};
+let B=flt(H,3,0);for(let p=0;p<3;p++)B=flt(B,2,1);
+/* 3) altura final: elevación + pliegues (verticales en los laterales, transversales delante/detrás) */
+let Y=new Float32Array(N);
+for(let k=0;k<NZ;k++)for(let j=0;j<NX;j++){const q=k*NX+j,b=B[q];if(b<.01)continue;
+const gx=(B[j<NX-1?q+1:q]-B[j>0?q-1:q])/(2*S),gz=(B[k<NZ-1?q+NX:q]-B[k>0?q-NX:q])/(2*S),st=Math.min(1,Math.hypot(gx,gz)/1.3),dx=gx*gx/(gx*gx+gz*gz+1e-9),X=x0+j*S,Z=z0+k*S;
+const fo=st*.05*(dx*(_vn(X*1.1,Z*4.3)+.35*_vn(X*2.3,Z*6.7))+(1-dx)*(_vn(X*4.3,Z*1.1)+.35*_vn(X*6.7,Z*2.3)))+.01*_vn(X*3.1,Z*2.7)*(1-st);
+Y[q]=Math.max(0,b+.03*Math.min(1,b*10)+fo-.035)}
+Y=flt(Y,1,1);
+/* 4) malla: posición, color de tela (borde inferior más oscuro, tipo elástico), normal suave, material 4 */
+const OV=new Float32Array(N*10),OI=[];
+for(let k=0;k<NZ;k++)for(let j=0;j<NX;j++){const q=k*NX+j,o=q*10,X=x0+j*S,Z=z0+k*S,y=Y[q];
+const nx0=-(Y[j<NX-1?q+1:q]-Y[j>0?q-1:q])/(2*S),nz0=-(Y[k<NZ-1?q+NX:q]-Y[k>0?q-NX:q])/(2*S),nl=Math.hypot(nx0,1,nz0);
+const sh=.92+.1*_vn(X*5.3+7,Z*5.3),hem=1-Math.min(1,Math.max(0,(y-.04)/.09));
+OV[o]=X;OV[o+1]=y;OV[o+2]=Z;OV[o+3]=(.50*(1-hem)+.22*hem)*sh;OV[o+4]=(.53*(1-hem)+.24*hem)*sh;OV[o+5]=(.60*(1-hem)+.29*hem)*sh;OV[o+6]=nx0/nl;OV[o+7]=1/nl;OV[o+8]=nz0/nl;OV[o+9]=4}
+for(let k=0;k<NZ-1;k++)for(let j=0;j<NX-1;j++){const q=k*NX+j;if(Math.max(Y[q],Y[q+1],Y[q+NX],Y[q+NX+1])>.004)OI.push(q,q+NX,q+1,q+1,q+NX,q+NX+1)}
+return{V:OV,IB:new Uint32Array(OI)}}
+
+const SECG={};/* geometría real del coche secreto (temporal, solo para la miniatura en negro) */
+function glMk(v,i){const vb=gl.createBuffer(),ib=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,v,gl.STATIC_DRAW);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,i,gl.STATIC_DRAW);return{ready:true,vb,ib,n:i.length}}
+async function secPrep(id){const{V,IB}=await loadGLB(DIR+FILES[id],id),cv=buildCover(V,IB);models['cover:'+id]=glMk(cv.V,cv.IB);SECG[id]=glMk(V,IB)}
+function freeSec(id){const s=SECG[id];if(s&&s.vb){gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.vertexAttribPointer(gLoc.p,3,gl.FLOAT,false,40,0);gl.vertexAttribPointer(gLoc.c,3,gl.FLOAT,false,40,12);gl.vertexAttribPointer(gLoc.n,3,gl.FLOAT,false,40,24);gl.vertexAttribPointer(gLoc.m,1,gl.FLOAT,false,40,36);gl.deleteBuffer(s.vb);gl.deleteBuffer(s.ib)}delete SECG[id]}
 const LQ=[];let LBUSY=0;const WMB={};
 function load(id,pri){const m=models[id];if(m){if(pri&&!m.ready&&!m.fail&&!m.run&&!m.hold){const k=LQ.indexOf(id);if(k>0){LQ.splice(k,1);LQ.unshift(id)}}return}
-const c=CARS.find(x=>x.id===id);if(c&&isSec(c)){models[id]={ready:false,hold:1};return}
+const c=CARS.find(x=>x.id===id);if(c&&isSec(c)){models[id]={ready:false,hold:1};if(pri)LQ.unshift(id);else LQ.push(id);lpump();return}
 models[id]={ready:false};if(pri)LQ.unshift(id);else LQ.push(id);lpump()}
-async function lpump(){if(LBUSY)return;LBUSY=1;while(LQ.length){const id=LQ.shift(),md=models[id];md.run=1;try{const{V,IB}=await loadGLB(DIR+FILES[id],id),vb=gl.createBuffer(),ib=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,V,gl.STATIC_DRAW);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,IB,gl.STATIC_DRAW);Object.assign(md,{ready:true,vb,ib,n:IB.length})}catch(e){md.fail=1}md.run=0}LBUSY=0}
+async function lpump(){if(LBUSY)return;LBUSY=1;while(LQ.length){const id=LQ.shift(),md=models[id];if(!md||md.ready)continue;md.run=1;if(md.hold){try{await secPrep(id)}catch(e){SECG[id]={fail:1}}md.run=0;continue}try{const{V,IB}=await loadGLB(DIR+FILES[id],id),vb=gl.createBuffer(),ib=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,V,gl.STATIC_DRAW);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,IB,gl.STATIC_DRAW);Object.assign(md,{ready:true,vb,ib,n:IB.length})}catch(e){md.fail=1}md.run=0}LBUSY=0}
 /* el coche elegido carga primero; el resto en segundo plano del más ligero al más pesado; al elegir otro salta al principio de la cola */
 async function loadRest(){await Promise.all(CARS.map(async c=>{try{const r=await fetch(DIR+FILES[c.id],{method:'HEAD'});WMB[c.id]=Number(r.headers.get('content-length'))||0}catch(e){WMB[c.id]=0}}));CARS.map(c=>c.id).filter(id=>id!==cur).sort((a,b)=>(WMB[a]||2e7)-(WMB[b]||2e7)).forEach(id=>load(id))}
 
@@ -1111,18 +1155,18 @@ const TH={},TF={},LCM={b:-6,h:2.5,p:.14,f:0};let thFbo=null,thT=null;
 function renderL(){const el=$('lgar');if(!el)return;const c=CARS.find(x=>x.id===pv)||CARS[0],i=CARS.indexOf(c),o=owned.includes(c.id),eq=cur===c.id,lk=!o&&(isSec(c)||lvOf(xp)<LVREQ[c.id]);
 const old=el.querySelector('.llist'),st=old?old.scrollTop:0,lab=eq?'EQUIPADO':o?'USAR':lk?(isSec(c)?'🔒 SECRETO':'🔒 NIVEL '+LVREQ[c.id]):'COMPRAR · '+c.price.toLocaleString('es')+' ●';
 const tag=k=>cur===k.id?'<em class="g">EN USO</em>':owned.includes(k.id)?'<em>USAR</em>':isSec(k)?'<em class="d">🔒 ???</em>':lvOf(xp)<LVREQ[k.id]?'<em class="d">🔒 NIV '+LVREQ[k.id]+'</em>':'<em class="y">'+k.price.toLocaleString('es')+' ●</em>';
-el.innerHTML=pmode?paintHTML(c,o,eq):`<div class="lh"><span>GARAJE</span><b>${Math.floor(money).toLocaleString('es')} <i>●</i></b></div><div class="llist">${CARS.map(k=>`<div class="lc${k.id===pv?' on':''}" data-l="sel" data-id="${k.id}"><div class="th">${TH[k.id]&&!isSec(k)?`<img src="${TH[k.id]}">`:'<span>🚗</span>'}</div><div class="li"><b>${isSec(k)?'???':k.n}</b><small>${isSec(k)?'??? CV · ??? KM/H':k.hp+' CV · '+k.top+' KM/H'}</small></div>${tag(k)}</div>`).join('')}</div><div class="lf"><div class="lr"><small>VELOCIDAD</small><div class="lb"><i style="width:${c.max/3.9}%"></i></div></div><div class="lr"><small>ACELERACIÓN</small><div class="lb"><i style="width:${Math.min(100,c.acc*50)}%"></i></div></div><div class="lst"><span>x${c.mult} moneda</span><span>${(pparts[c.id]||[]).length}/${PARTS.length} partes</span></div><div class="lbs"><button class="main${eq||lk?' off':''}" data-l="pick">${lab}</button><button data-l="paint">🎨 Pintura</button><button data-l="shop">🛒 Tienda</button></div></div>`;
+el.innerHTML=pmode?paintHTML(c,o,eq):`<div class="lh"><span>GARAJE</span><b>${Math.floor(money).toLocaleString('es')} <i>●</i></b></div><div class="llist">${CARS.map(k=>`<div class="lc${k.id===pv?' on':''}" data-l="sel" data-id="${k.id}"><div class="th">${TH[k.id]?`<img src="${TH[k.id]}">`:isSec(k)?'<span style="font:800 26px DM Sans;color:#5b7a93">?</span>':'<span>🚗</span>'}</div><div class="li"><b>${isSec(k)?'???':k.n}</b><small>${isSec(k)?'??? CV · ??? KM/H':k.hp+' CV · '+k.top+' KM/H'}</small></div>${tag(k)}</div>`).join('')}</div><div class="lf"><div class="lr"><small>VELOCIDAD</small><div class="lb"><i style="width:${c.max/3.9}%"></i></div></div><div class="lr"><small>ACELERACIÓN</small><div class="lb"><i style="width:${Math.min(100,c.acc*50)}%"></i></div></div><div class="lst"><span>x${c.mult} moneda</span><span>${(pparts[c.id]||[]).length}/${PARTS.length} partes</span></div><div class="lbs"><button class="main${eq||lk?' off':''}" data-l="pick">${lab}</button><button data-l="paint">🎨 Pintura</button><button data-l="shop">🛒 Tienda</button></div></div>`;
 const ls=el.querySelector('.llist');ls.scrollTop=st;const it=ls.querySelector('.on');if(it){const t=it.offsetTop,b=t+it.offsetHeight;if(t<ls.scrollTop)ls.scrollTop=t-4;else if(b>ls.scrollTop+ls.clientHeight)ls.scrollTop=b-ls.clientHeight+4}
 $('lnav').innerHTML=`<button class="arr" data-l="prev">‹</button><div class="nm"><b>${isSec(c)?'???':c.n}</b><small>${isSec(c)?'🔒 Misión secreta · velocidad legendaria':(i+1)+' / '+CARS.length+(eq?' · EN USO':'')}</small></div><button class="arr" data-l="next">›</button>`}
-function thTick(){if(!lobby||thFbo===0)return;for(const c of CARS){if(TH[c.id]||TF[c.id])continue;const m=models[c.id];if(m&&m.fail){TF[c.id]=1;continue}if(m&&m.ready){thumb(c.id);renderL();return}}}
-function thumb(id){const md=models[id],N=160;TF[id]=1;try{
+function thTick(){if(!lobby||thFbo===0)return;for(const c of CARS){if(TH[c.id]||TF[c.id])continue;if(isSec(c)){const s=SECG[c.id];if(!s)continue;if(s.fail){TF[c.id]=1;continue}thumb(c.id,s,1);freeSec(c.id);renderL();return}const m=models[c.id];if(m&&m.fail){TF[c.id]=1;continue}if(m&&m.ready){thumb(c.id);renderL();return}}}
+function thumb(id,mdIn,sil){const md=mdIn||models[id],N=160;TF[id]=1;try{
 if(!thFbo){thT=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,thT);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,N,N,0,gl.RGBA,gl.UNSIGNED_BYTE,null);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);const d=gl.createRenderbuffer();gl.bindRenderbuffer(gl.RENDERBUFFER,d);gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,N,N);thFbo=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,thFbo);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,thT,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,d)}
 gl.bindFramebuffer(gl.FRAMEBUFFER,thFbo);gl.viewport(0,0,N,N);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.disable(gl.BLEND);gl.useProgram(game);gl.uniform1f(gLoc.g,0);gl.uniform1f(gLoc.sh,0);
 gl.uniformMatrix4fv(gLoc.proj,false,projection(.62,1,.1,280));gl.uniform4f(gLoc.cam,0,1.5,0,.12);gl.uniform1f(gLoc.yaw,0);gl.uniform1f(gLoc.time,T);gl.uniform1f(gLoc.base,0);gl.uniform1f(gLoc.sc,1);gl.uniform1f(gLoc.al,1);gl.uniform1f(gLoc.rot,2.5);gl.uniform3f(gLoc.off,0,-.39,10.5);
 const stride=40;gl.bindBuffer(gl.ARRAY_BUFFER,md.vb);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,md.ib);gl.vertexAttribPointer(gLoc.p,3,gl.FLOAT,false,stride,0);gl.vertexAttribPointer(gLoc.c,3,gl.FLOAT,false,stride,12);gl.vertexAttribPointer(gLoc.n,3,gl.FLOAT,false,stride,24);gl.vertexAttribPointer(gLoc.m,1,gl.FLOAT,false,stride,36);setPaint(PAINTOF(id));
 gl.drawElements(gl.TRIANGLES,md.n,gl.UNSIGNED_INT,0);
 const px=new Uint8Array(N*N*4);gl.readPixels(0,0,N,N,gl.RGBA,gl.UNSIGNED_BYTE,px);gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.enable(gl.BLEND);
-const cv=document.createElement('canvas');cv.width=cv.height=N;const cx=cv.getContext('2d'),im=cx.createImageData(N,N);let any=0;for(let y=0;y<N;y++)for(let x=0;x<N*4;x++){const v=px[(N-1-y)*N*4+x];im.data[y*N*4+x]=v;if(v&&x%4===3)any=1}
+const cv=document.createElement('canvas');cv.width=cv.height=N;const cx=cv.getContext('2d'),im=cx.createImageData(N,N);let any=0;for(let y=0;y<N;y++)for(let x=0;x<N*4;x++){const v=px[(N-1-y)*N*4+x];im.data[y*N*4+x]=sil&&x%4!==3?0:v;if(v&&x%4===3)any=1}
 if(any){cx.putImageData(im,0,0);TH[id]=cv.toDataURL()}}catch(e){gl.bindFramebuffer(gl.FRAMEBUFFER,null)}}
 $('lob').onclick=e=>{const b=e.target.closest('[data-l]');if(!b)return;const k=b.dataset.l,o=$('overlay');AU.init();
 if(pntClick(k,b))return;
@@ -1193,7 +1237,7 @@ wplant(X-1.3,8.8,1.1);wplant(X-1.3,6.9,1);wplant(-X+1.6,10,1);
 /* suelo: sombra de contacto suave */
 
 /* el coche seleccionado, fijo */
-const md=models[pv];if(md&&md.ready)mdraw.push([pv,0,0,0,1,PAINTOF(pv,1),1]);else car(0,0,[0,1,1],true,0,0);
+const md=models[pv],pc=CARS.find(x=>x.id===pv),sk=pc&&isSec(pc),cvm=sk?models['cover:'+pv]:null;if(cvm&&cvm.ready)mdraw.push(['cover:'+pv,0,0,0,1,undefined,0]);else if(sk){}else if(md&&md.ready)mdraw.push([pv,0,0,0,1,PAINTOF(pv,1),1]);else car(0,0,[0,1,1],true,0,0);
 nOpq=verts.length/10;for(let i=0;i<shd.length;i++)verts.push(shd[i])}
 (()=>{const ov=$('overlay');let d=null;ov.addEventListener('pointerdown',e=>{if(!lobby||e.target.closest('button,.lgar,.lnav,.lside,.progpanel,.shopm'))return;e.preventDefault();d={x:e.clientX,y:e.clientY};try{ov.setPointerCapture(e.pointerId)}catch(_){}ov.style.cursor='grabbing'});
 ov.addEventListener('pointermove',e=>{if(!d)return;LG.ta+=(e.clientX-d.x)*.008;LG.te=Math.max(.05,Math.min(.55,LG.te+(e.clientY-d.y)*.005));d.x=e.clientX;d.y=e.clientY});
@@ -1463,6 +1507,8 @@ $('mt').onclick=e=>{if(e.target.closest('#mtgo'))miniClose()};
 /* ================= /OBRAS ================= */
 
 function frame(now){const raw=(now-(frame.last||now))/1000,fz=(tut.on&&tut.frz)||!!mini||!!photoFrz;if(fz)tOff+=raw;T=now/1000-tOff;let dt=Math.min(.05,raw);frame.last=now;update(fz?0:dt);verts.length=0;mdraw.length=0;scenery();hqTick();draw();if(capReq)doCap();thTick();requestAnimationFrame(frame)}requestAnimationFrame(frame);
+/* ===== TRUCOS (consola F12): cheat.money(n) · cheat.level(n) · cheat.car('koenigsegg_jesko') · cheat.all() ===== */
+window.cheat={money(n){money+=n||1e6;sv();renderG();renderL();return Math.floor(money)},level(n){xp=Math.max(xp,xpAt(n||30));saveP();renderL();renderP();return lvOf(xp)},car(id){const c=CARS.find(x=>x.id===id);if(!c)return CARS.map(x=>x.id);if(!owned.includes(id))owned.push(id);cur=id;CS=c;pv=id;sv();renderG();renderL();renderP();return c.n},all(){CARS.forEach(c=>{if(!owned.includes(c.id))owned.push(c.id)});sv();saveP();try{localStorage.setItem('curvaSec','1')}catch(e){}location.reload()}};
 })();
 </script>
 </body></html>
