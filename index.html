@@ -297,7 +297,7 @@ body.cine .topbar,body.cine .hud,body.cine .right-hud,body.cine .corner,body.cin
 const canvas=document.getElementById('game'),gl=canvas.getContext('webgl',{antialias:false,alpha:false});if(gl)gl.getExtension('OES_element_index_uint');
 if(!gl){document.getElementById('overlay').innerHTML='<div class="card"><div class="title">WEBGL<br><span>NO DISPONIBLE</span></div><div class="desc">Activa la aceleración gráfica del navegador para jugar.</div></div>';return;}
 /*HQ-PRE*/
-const FLIP180={koenigsegg_jesko:1,apollo_ie:1,bmw_m3_touring:1};/* modelos que miran hacia atrás: giro de 180° en vertical */
+const FLIP180={koenigsegg_jesko:1,apollo_ie:1,bmw_m3_touring:1,mazda_787b:1};/* modelos que miran hacia atrás: giro de 180° en vertical */
 const HQ={on:false,exp:1,refl:.8,sun:1,amb:1,ns:0,S:null,S2:null,P:null,cam:null,yaw:0};
 const HQ_NSH=`
 float unpN(vec4 c){return dot(c,vec4(1.,.00392157,.0000153787,.0000000603));}
@@ -766,12 +766,14 @@ const CARS=[
 {id:'bmw_m3_touring',n:'BMW M3 Competition Touring',hp:510,top:280,price:600,max:233,bmax:283,acc:1.18,mult:1.35},
 {id:'audi_rs6_avant',n:'Audi RS6 Avant',hp:600,top:305,price:750,max:238,bmax:288,acc:1.21,mult:1.4},
 {id:'lamborghini_svj',n:'Aventador SVJ',hp:770,top:350,price:900,max:245,bmax:295,acc:1.25,mult:1.5},
+{id:'audi_r8_v10',n:'Audi R8 V10 Performance',hp:620,top:331,price:1200,max:250,bmax:300,acc:1.3,mult:1.6},
 {id:'ford_mustang_gt500',n:'Ford Mustang Shelby GT500',hp:760,top:290,price:1300,max:251,bmax:301,acc:1.3,mult:1.6},
 {id:'mercedes_amg_gt_bs',n:'Mercedes-AMG GT Black Series',hp:730,top:325,price:1800,max:256,bmax:306,acc:1.34,mult:1.7},
 {id:'saleen_s7_tt',n:'Saleen S7 Twin Turbo',hp:750,top:399,price:2200,max:260,bmax:310,acc:1.37,mult:1.85},
 {id:'mclaren_p1',n:'McLaren P1',hp:903,top:350,price:2500,max:265,bmax:315,acc:1.4,mult:2},
 {id:'pagani_huayra_bc',n:'Pagani Huayra BC',hp:789,top:370,price:3500,max:271,bmax:321,acc:1.45,mult:2.1},
 {id:'apollo_ie',n:'Apollo Intensa Emozione',hp:780,top:335,price:4300,max:277,bmax:327,acc:1.5,mult:2.25},
+{id:'mazda_787b',n:'Mazda 787B',hp:700,top:340,price:4500,max:260,bmax:310,acc:1.5,mult:2.2},
 {id:'porsche_918_spyder',n:'Porsche 918 Spyder',hp:887,top:345,price:5000,max:281,bmax:331,acc:1.55,mult:2.35},
 {id:'ferrari_sf90_xx',n:'Ferrari SF90 XX',hp:1016,top:320,price:6000,max:285,bmax:335,acc:1.6,mult:2.5},
 {id:'mclaren_senna_gtr',n:'McLaren Senna GTR',hp:825,top:340,price:8000,max:292,bmax:342,acc:1.65,mult:2.65},
@@ -780,10 +782,14 @@ const CARS=[
 {id:'koenigsegg_agera_rs',n:'Koenigsegg Agera RS',hp:1360,top:447,price:14000,max:310,bmax:360,acc:1.8,mult:3},
 {id:'bugatti_veyron_ss',n:'Bugatti Veyron Super Sport',hp:1200,top:431,price:24000,max:328,bmax:378,acc:1.93,mult:3.6},
 {id:'bugatti_chiron',n:'Bugatti Chiron',hp:1500,top:420,price:30000,max:340,bmax:390,acc:2,mult:4},
+{id:'aston_martin_valkyrie',n:'Aston Martin Valkyrie',hp:1160,top:354,price:38000,max:355,bmax:405,acc:2.1,mult:4.5},
 {id:'koenigsegg_jesko',n:'Koenigsegg Jesko',hp:1600,top:482,price:45000,max:352,bmax:405,acc:2.15,mult:4.6},
-{id:'ssc_tuatara',n:'SSC Tuatara Striker',hp:1750,top:455,price:80000,max:368,bmax:425,acc:2.3,mult:5.5,sec:1}];
+{id:'bugatti_bolide',n:'Bugatti Bolide',hp:1600,top:380,price:50000,max:370,bmax:420,acc:2.25,mult:5},
+{id:'rimac_nevera',n:'Rimac Nevera',hp:1914,top:412,price:65000,max:385,bmax:435,acc:2.4,mult:5.5},
+{id:'ssc_tuatara',n:'SSC Tuatara Striker',hp:1750,top:455,price:80000,max:368,bmax:425,acc:2.3,mult:5.5,sec:1},
+{id:'hennessey_venom_f5',n:'Hennessey Venom F5',hp:1817,top:460,price:85000,max:410,bmax:460,acc:2.6,mult:6.5,sec:2}];
 const DIR='https://huggingface.co/gerardgomez1734/coches/resolve/main/';/* carpeta con los .glb originales (sin optimizar) */
-const FILES={porsche_gt3_rs:'porsche_gt3_rs.glb',ford_gt:'2017_ford_gt_heritage_edition.glb',lamborghini_svj:'aventador_svj_black-ghosttm_1.glb',mclaren_p1:'mclaren_p1__www_vecarz_com.glb',ferrari_sf90_xx:'ferrari_sf90_xx__www_vecarz_com_1.glb',koenigsegg_agera_rs:'koenigsegg_agera_rs_1.glb',bugatti_chiron:'2016_bugatti_chiron.glb',lotus_emira_gt4:'2021_lotus_emira_gt4_concept.glb',toyota_supra_varis:'2020_varis_supreme_a90__a91_toyota_gr_supra.glb',porsche_718_spyder_rs:'2024_porsche_718_spyder_rs.glb',chevrolet_corvette_c8:'2020_chevrolet_corvette_c8_stingray_convertible.glb',bmw_m3_touring:'2023_bmw_m3_competition_xdrive_touring.glb',audi_rs6_avant:'2020_audi_rs6_avant.glb',ford_mustang_gt500:'ford_mustang_shelby_gt500.glb',mercedes_amg_gt_bs:'mercedes-benz_amg_gt_black_series.glb',saleen_s7_tt:'saleen_s7_twin_turbo_2005__www_vecarz_com.glb',pagani_huayra_bc:'pagani_huayra_bc.glb',apollo_ie:'2017-2020_apollo_intensa_emozione.glb',porsche_918_spyder:'porsche_918_spyder_2015__www_vecarz_com.glb',mclaren_senna_gtr:'2020_mclaren_senna_gtr.glb',ferrari_laferrari:'2014_ferrari_laferrari.glb',mercedes_amg_one:'2023_mercedes-benz_amg_one.glb',bugatti_veyron_ss:'2010_bugatti_veyron_16_4_super_sport_431_kmh.glb',koenigsegg_jesko:'koenigsegg_jesko_black_2020_free.glb',ssc_tuatara:'2023_ssc_tuatara_striker.glb'};
+const FILES={porsche_gt3_rs:'porsche_gt3_rs.glb',ford_gt:'2017_ford_gt_heritage_edition.glb',lamborghini_svj:'aventador_svj_black-ghosttm_1.glb',mclaren_p1:'mclaren_p1__www_vecarz_com.glb',ferrari_sf90_xx:'ferrari_sf90_xx__www_vecarz_com_1.glb',koenigsegg_agera_rs:'koenigsegg_agera_rs_1.glb',bugatti_chiron:'2016_bugatti_chiron.glb',lotus_emira_gt4:'2021_lotus_emira_gt4_concept.glb',toyota_supra_varis:'2020_varis_supreme_a90__a91_toyota_gr_supra.glb',porsche_718_spyder_rs:'2024_porsche_718_spyder_rs.glb',chevrolet_corvette_c8:'2020_chevrolet_corvette_c8_stingray_convertible.glb',bmw_m3_touring:'2023_bmw_m3_competition_xdrive_touring.glb',audi_rs6_avant:'2020_audi_rs6_avant.glb',ford_mustang_gt500:'ford_mustang_shelby_gt500.glb',mercedes_amg_gt_bs:'mercedes-benz_amg_gt_black_series.glb',saleen_s7_tt:'saleen_s7_twin_turbo_2005__www_vecarz_com.glb',pagani_huayra_bc:'pagani_huayra_bc.glb',apollo_ie:'2017-2020_apollo_intensa_emozione.glb',porsche_918_spyder:'porsche_918_spyder_2015__www_vecarz_com.glb',mclaren_senna_gtr:'2020_mclaren_senna_gtr.glb',ferrari_laferrari:'2014_ferrari_laferrari.glb',mercedes_amg_one:'2023_mercedes-benz_amg_one.glb',bugatti_veyron_ss:'2010_bugatti_veyron_16_4_super_sport_431_kmh.glb',koenigsegg_jesko:'koenigsegg_jesko_black_2020_free.glb',ssc_tuatara:'2023_ssc_tuatara_striker.glb',audi_r8_v10:'2019_audi_r8_v10_performance_quattro.glb',mazda_787b:'1991_mazda_787b.glb',aston_martin_valkyrie:'2022_aston_martin_valkyrie_spider.glb',bugatti_bolide:'2025_bugatti_bolide.glb',rimac_nevera:'rimac_nevera_r_2025__www_vecarz_com.glb',hennessey_venom_f5:'2023_hennessey_venom_f5_roadster.glb'};
 const models={},mdraw=[],LEN=6.45,TS=512;let CS=CARS[0],pv=cur,chain=Promise.resolve();
 /*PAINT-START*/
 /* ===== PINTURA: colores por coche (carrocería / llantas / pinzas) =====
@@ -814,14 +820,20 @@ ferrari_laferrari:{b:['uv1MAT_Carpaint_Red1'],c:['Color_Caliper','CalipersFerrar
 mercedes_amg_one:{b:['AMGMAT_CarPaint_Metallic_White_074','AMGMAT_AMG_One_CarPaint2_014'],r:['AMGMAT_Tire_Hub1'],c:['AMGMAT_Tire_Brake1'],s:['AMGMAT_AMG_One_Carbon_039']},
 bugatti_veyron_ss:{b:[/2012Carbon1_Material$/],c:[/CalliperGloss/],s:[/2012Paint_Material$/],wh:['Bugatti_VeyronSuperSportGold_2012_Wheel1A_3D_3DWheel1C_Material'],rad:[{m:'Bugatti_VeyronSuperSportGold_2012_Wheel1A_3D_3DWheel1C_Material',z:'r',r:.7}]},
 koenigsegg_jesko:{b:['L1Mtl','Meshpart13Mtl'],r:['Meshpart2Mtl.001','Meshpart3Mtl.001'],s:['Meshpart26Mtl','Meshpart18Mtl']},
-ssc_tuatara:{b:['Paint'],c:['CaliperAZonePaint'],s:['Carbon1'],wh:['Wheel1A'],rad:[{m:'Wheel1A',z:'r',r:.7}]}
+ssc_tuatara:{b:['Paint'],c:['CaliperAZonePaint'],s:['Carbon1'],wh:['Wheel1A'],rad:[{m:'Wheel1A',z:'r',r:.7}]},
+audi_r8_v10:{b:['rM_CarPaint_Max1'],r:['rM_Rim_Main_Max1','rM_Rim_Secondary_Max1'],c:['R8CalliperExotic6_Front_LSG3'],s:['rM_CarPaint_Trim_CarbonA_Max_002']},
+mazda_787b:{only:['r'],r:['Mesh1Mtl.001','Mesh22Mtl.001']},
+aston_martin_valkyrie:{b:['aAstonMartin_ValkyrieSpider_2022Paint_Material1'],c:['aAstonMartin_ValkyrieSpider_2022_CallipersCalliperA_Zone_d419642'],s:['aAstonMartin_ValkyrieSpider_2022Coloured_Material1','aAstonMartin_ValkyrieSpider_2022Carbon1_Material1'],wh:['aAstonMartin_ValkyrieSpider_2022_Wheel1A_3D_3DWheel1A_Material1'],rad:[{m:'aAstonMartin_ValkyrieSpider_2022_Wheel1A_3D_3DWheel1A_Material1',z:'r',r:.7}]},
+bugatti_bolide:{only:['b','s'],sp:[{m:'main1',hi:1,lo:4,t:.22}]},
+rimac_nevera:{b:['neveraRimac_NeveraR_2025Paint_Material1'],c:['neveraRimac_NeveraR_2025_CallipersCalliperA_Zone_Material1'],s:['neveraRimac_NeveraR_2025Coloured_Material1','neveraRimac_NeveraR_2025Carbon1_Material1'],wh:['neveraRimac_NeveraR_2025_Wheel1A_3D_3DWheel1A_Material1'],rad:[{m:'neveraRimac_NeveraR_2025_Wheel1A_3D_3DWheel1A_Material1',z:'r',r:.7}]},
+hennessey_venom_f5:{b:['Hennessey_VenomF5RoadsterRewardRecycled_2023Paint_Material'],c:['Hennessey_VenomF5RoadsterReward_2023_CallipersCalliperA_Zone_Material'],s:['Color_2','Hennessey_VenomF5RoadsterRewardRecycled_2023Carbon1DetailsA_Material'],wh:['Hennessey_VenomF5RoadsterReward_2023_Wheel1A_3D_3DWheel2A_Material'],rad:[{m:'Hennessey_VenomF5RoadsterReward_2023_Wheel1A_3D_3DWheel2A_Material',z:'r',r:.7}]}
 };
 function partCat(id,nm,node){const R=PAINT_MAP[id];if(!R)return 0;const t=l=>(l||[]).some(e=>typeof e==='string'?e===nm:e instanceof RegExp?e.test(nm):Array.isArray(e)&&e[0]===nm&&e[1].test(node));if(R.sp)for(const q of R.sp)if(q.m===nm)return q;return t(R.b)?1:t(R.r)?2:t(R.c)?3:t(R.s)?4:0}
 const TSMAX=(()=>{try{return JSON.parse(localStorage.getItem('curvaSet')||'{}').hd===0?4096:512}catch(e){return 512}})();/* las texturas de los GLB se leen a su tamaño real (tope 4096), sin reducirlas */
 /* muestreo bilineal de una textura (con KHR_texture_transform si la tiene) → [r,g,b] 0..1 */
 function smp(T,tt,u,v){if(tt){const c=Math.cos(tt.r),s=Math.sin(tt.r),nu=tt.o[0]+c*tt.s[0]*u+s*tt.s[1]*v,nv=tt.o[1]-s*tt.s[0]*u+c*tt.s[1]*v;u=nu;v=nv}const w=T.w,h=T.h,D=T.d;u=(u-Math.floor(u))*w-.5;v=(v-Math.floor(v))*h-.5;const x0=Math.floor(u),y0=Math.floor(v),fx=u-x0,fy=v-y0,X0=((x0%w)+w)%w,X1=(((x0+1)%w)+w)%w,Y0=((y0%h)+h)%h,Y1=(((y0+1)%h)+h)%h,a=(Y0*w+X0)*4,bb=(Y0*w+X1)*4,c2=(Y1*w+X0)*4,d2=(Y1*w+X1)*4,w1=(1-fx)*(1-fy),w2=fx*(1-fy),w3=(1-fx)*fy,w4=fx*fy;return[(D[a]*w1+D[bb]*w2+D[c2]*w3+D[d2]*w4)/255,(D[a+1]*w1+D[bb+1]*w2+D[c2+1]*w3+D[d2+1]*w4)/255,(D[a+2]*w1+D[bb+2]*w2+D[c2+2]*w3+D[d2+2]*w4)/255]}
 const PZ=[['b','Carrocería'],['s','Secundario'],['r','Llantas'],['c','Pinzas']];
-const zonesOf=id=>PZ.filter(z=>z[0]!=='s'||(PAINT_MAP[id]&&(PAINT_MAP[id].s||PAINT_MAP[id].sp)));
+const zonesOf=id=>PZ.filter(z=>(z[0]!=='s'||(PAINT_MAP[id]&&(PAINT_MAP[id].s||PAINT_MAP[id].sp)))&&(!(PAINT_MAP[id]&&PAINT_MAP[id].only)||PAINT_MAP[id].only.includes(z[0])));
 /* t:1 = 400 ●, t:2 = 900 ● (se multiplica según el coche) · m:'s'/'g' = solo por misión (plateado / dorado) */
 const PCOLS=[
 {id:'blk',n:'Negro',h:'#101114',t:1},{id:'wht',n:'Blanco perla',h:'#f2f4f6',t:1},{id:'gry',n:'Grafito',h:'#3b4048',t:1},
@@ -856,7 +868,13 @@ ferrari_laferrari:{s:{d:'Gana 1.300 ● en una partida',g:1300,u:'●',v:()=>Mat
 mercedes_amg_one:{s:{d:'Encadena un combo x10',g:10,u:'',v:()=>bestCmb},g:{d:'Alcanza 335 km/h',g:335,u:'km/h',v:()=>maxSp}},
 bugatti_veyron_ss:{s:{d:'Logra 14.000 puntos de una vez',g:14000,u:'pts',v:()=>Math.floor(score)},g:{d:'Alcanza 360 km/h',g:360,u:'km/h',v:()=>maxSp}},
 koenigsegg_jesko:{s:{d:'Recorre 9 km de una vez',g:9,u:'km',v:()=>distance},g:{d:'Alcanza 385 km/h',g:385,u:'km/h',v:()=>maxSp}},
-ssc_tuatara:{s:{d:'Logra 22.000 puntos de una vez',g:22000,u:'pts',v:()=>Math.floor(score)},g:{d:'Alcanza 410 km/h',g:410,u:'km/h',v:()=>maxSp}}
+ssc_tuatara:{s:{d:'Logra 22.000 puntos de una vez',g:22000,u:'pts',v:()=>Math.floor(score)},g:{d:'Alcanza 410 km/h',g:410,u:'km/h',v:()=>maxSp}},
+audi_r8_v10:{s:{d:'Logra 4.500 puntos de una vez',g:4500,u:'pts',v:()=>Math.floor(score)},g:{d:'Alcanza 275 km/h',g:275,u:'km/h',v:()=>maxSp}},
+mazda_787b:{s:{d:'Gana 1.100 ● en una partida',g:1100,u:'●',v:()=>Math.floor(runCoins)},g:{d:'Alcanza 300 km/h',g:300,u:'km/h',v:()=>maxSp}},
+aston_martin_valkyrie:{s:{d:'Recorre 8 km de una vez',g:8,u:'km',v:()=>distance},g:{d:'Alcanza 395 km/h',g:395,u:'km/h',v:()=>maxSp}},
+bugatti_bolide:{s:{d:'Logra 18.000 puntos de una vez',g:18000,u:'pts',v:()=>Math.floor(score)},g:{d:'Alcanza 405 km/h',g:405,u:'km/h',v:()=>maxSp}},
+rimac_nevera:{s:{d:'Gana 2.500 ● en una partida',g:2500,u:'●',v:()=>Math.floor(runCoins)},g:{d:'Encadena un combo x12',g:12,u:'',v:()=>bestCmb}},
+hennessey_venom_f5:{s:{d:'Logra 30.000 puntos de una vez',g:30000,u:'pts',v:()=>Math.floor(score)},g:{d:'Alcanza 450 km/h',g:450,u:'km/h',v:()=>maxSp}}
 };
 var PCOL={},PCUR={},CMD={},CMP={},PTUNE={},pmode=0,pzone='b',PV={};
 const pLoad=(k)=>{try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return{}}};
@@ -882,9 +900,9 @@ const rows=[['h','Tono',-30,30],['s','Saturación',-100,100],['l','Luminosidad',
 return`<div class="ptune"><div class="pth"><span>AJUSTE FINO</span><button data-l="ptreset">Restablecer</button></div>${rows}<small class="ptn">Brillo 0% = pintura mate · 100% = barniz brillante</small></div>`}
 function pApply(id,z,col){PCUR[id]=PCUR[id]||{};if(col)PCUR[id][z]=col;else delete PCUR[id][z];psave();delete TH[id];delete TF[id]}
 /* misiones de color: se comprueban mientras se conduce (desde chkAch) y al chocar */
-function carMisChk(){if(!run||dead||tut.on)return;if(!SEC&&maxSp>=400){SEC=true;try{localStorage.setItem('curvaSec','1')}catch(e){}const sc=CARS.find(c=>c.sec);if(sc){delete models[sc.id];const cm=models['cover:'+sc.id];if(cm){gl.deleteBuffer(cm.vb);gl.deleteBuffer(cm.ib);delete models['cover:'+sc.id]}freeSec(sc.id);delete TH[sc.id];delete TF[sc.id];load(sc.id,1)}say('🔓 COCHE SECRETO DESBLOQUEADO · MIRA EL GARAJE');AU.sfx('buy');renderG()}const m=CARMIS[cur];if(!m)return;for(const k of['s','g']){const q=m[k],v=q.v(),key=cur+':'+k;if(v>(CMP[key]||0))CMP[key]=v;if(!cmDone(cur,k)&&v>=q.g){CMD[cur]=CMD[cur]||{};CMD[cur][k]=1;const col=k==='s'?'slv':'gld',cn=CARS.find(c=>c.id===cur).n;PCOL[cur]=PCOL[cur]||[];if(!pHas(cur,col))PCOL[cur].push(col);say('COLOR '+(k==='s'?'PLATEADO':'DORADO')+' DESBLOQUEADO · '+cn.toUpperCase());AU.sfx('mission');runDone.push('Color '+(k==='s'?'plateado':'dorado')+' desbloqueado ('+cn+')');psave()}}}
+function carMisChk(){if(!run||dead||tut.on)return;if(!SEC&&maxSp>=400){SEC=true;try{localStorage.setItem('curvaSec','1')}catch(e){}const sc=CARS.find(c=>c.sec===1);if(sc){delete models[sc.id];const cm=models['cover:'+sc.id];if(cm){gl.deleteBuffer(cm.vb);gl.deleteBuffer(cm.ib);delete models['cover:'+sc.id]}freeSec(sc.id);delete TH[sc.id];delete TF[sc.id];load(sc.id,1)}say('🔓 COCHE SECRETO DESBLOQUEADO · MIRA EL GARAJE');AU.sfx('buy');renderG()}if(SEC&&!SEC2&&distance>=SEC2KM){SEC2=true;try{localStorage.setItem('curvaSec2','1')}catch(e){}const sc=CARS.find(c=>c.sec===2);if(sc){delete models[sc.id];const cm=models['cover:'+sc.id];if(cm){gl.deleteBuffer(cm.vb);gl.deleteBuffer(cm.ib);delete models['cover:'+sc.id]}freeSec(sc.id);delete TH[sc.id];delete TF[sc.id];load(sc.id,1)}say('🔓 SEGUNDO COCHE SECRETO DESBLOQUEADO · MIRA EL GARAJE');AU.sfx('buy');renderG()}const m=CARMIS[cur];if(!m)return;for(const k of['s','g']){const q=m[k],v=q.v(),key=cur+':'+k;if(v>(CMP[key]||0))CMP[key]=v;if(!cmDone(cur,k)&&v>=q.g){CMD[cur]=CMD[cur]||{};CMD[cur][k]=1;const col=k==='s'?'slv':'gld',cn=CARS.find(c=>c.id===cur).n;PCOL[cur]=PCOL[cur]||[];if(!pHas(cur,col))PCOL[cur].push(col);say('COLOR '+(k==='s'?'PLATEADO':'DORADO')+' DESBLOQUEADO · '+cn.toUpperCase());AU.sfx('mission');runDone.push('Color '+(k==='s'?'plateado':'dorado')+' desbloqueado ('+cn+')');psave()}}}
 function paintHTML(c,o,eq){
-if(!zonesOf(c.id).some(z=>z[0]===pzone))pzone='b';
+if(!zonesOf(c.id).some(z=>z[0]===pzone))pzone=zonesOf(c.id)[0][0];
 const own=PCOL[c.id]||[],cu=PCUR[c.id]||{},cm=CARMIS[c.id]||{},sel=(PV.id===c.id&&PV.z===pzone&&PV.col)?PCOLS.find(x=>x.id===PV.col):null;
 const stock=`<div class="psw st${cu[pzone]?'':' ap'}" data-l="psw" data-col="stock"><i></i><b>De fábrica</b><small>${cu[pzone]?'✓':'EN USO'}</small></div>`;
 const sw=PCOLS.map(k=>{const has=own.includes(k.id),ap=cu[pzone]===k.id,mk=k.m?cm[k.m]:null;let sub;if(has)sub=ap?'EN USO':'✓';else if(mk)sub='🔒 '+Math.round(Math.min(1,(CMP[c.id+':'+k.m]||0)/mk.g)*100)+'%';else sub=pPrice(k,c).toLocaleString('es')+' ●';
@@ -982,8 +1000,8 @@ async function lpump(){if(LBUSY)return;LBUSY=1;while(LQ.length){const id=LQ.shif
 async function loadRest(){await Promise.all(CARS.map(async c=>{try{const r=await fetch(DIR+FILES[c.id],{method:'HEAD'});WMB[c.id]=Number(r.headers.get('content-length'))||0}catch(e){WMB[c.id]=0}}));CARS.map(c=>c.id).filter(id=>id!==cur).sort((a,b)=>(WMB[a]||2e7)-(WMB[b]||2e7)).forEach(id=>load(id))}
 
 /* ================= PROGRESIÓN: nivel/XP, retos y mejoras ================= */
-var SEC=(()=>{try{return localStorage.getItem('curvaSec')==='1'}catch(e){return false}})();const isSec=c=>!!(c&&c.sec&&!SEC);
-const LVREQ={porsche_gt3_rs:1,ford_gt:2,lamborghini_svj:4,mclaren_p1:6,ferrari_sf90_xx:9,koenigsegg_agera_rs:12,bugatti_chiron:15,lotus_emira_gt4:1,toyota_supra_varis:2,porsche_718_spyder_rs:2,chevrolet_corvette_c8:3,bmw_m3_touring:3,audi_rs6_avant:4,ford_mustang_gt500:5,mercedes_amg_gt_bs:5,saleen_s7_tt:6,pagani_huayra_bc:7,apollo_ie:8,porsche_918_spyder:8,mclaren_senna_gtr:10,ferrari_laferrari:11,mercedes_amg_one:11,bugatti_veyron_ss:14,koenigsegg_jesko:17,ssc_tuatara:20};
+var SEC=(()=>{try{return localStorage.getItem('curvaSec')==='1'}catch(e){return false}})();var SEC2=(()=>{try{return localStorage.getItem('curvaSec2')==='1'}catch(e){return false}})();const SEC2KM=20;const isSec=c=>!!(c&&c.sec&&!(c.sec===2?SEC2:SEC));
+const LVREQ={porsche_gt3_rs:1,ford_gt:2,lamborghini_svj:4,mclaren_p1:6,ferrari_sf90_xx:9,koenigsegg_agera_rs:12,bugatti_chiron:15,lotus_emira_gt4:1,toyota_supra_varis:2,porsche_718_spyder_rs:2,chevrolet_corvette_c8:3,bmw_m3_touring:3,audi_rs6_avant:4,ford_mustang_gt500:5,mercedes_amg_gt_bs:5,saleen_s7_tt:6,pagani_huayra_bc:7,apollo_ie:8,porsche_918_spyder:8,mclaren_senna_gtr:10,ferrari_laferrari:11,mercedes_amg_one:11,bugatti_veyron_ss:14,koenigsegg_jesko:17,ssc_tuatara:20,audi_r8_v10:5,mazda_787b:8,aston_martin_valkyrie:16,bugatti_bolide:18,rimac_nevera:20,hennessey_venom_f5:23};
 /* ---- TIENDA DE PARTES ---- */
 const RAR=[{n:'RARO',c:'#4ade80'},{n:'SÚPER RARO',c:'#3b9bff'},{n:'ÉPICO',c:'#b66bff'},{n:'MÍTICO',c:'#ff3d52'},{n:'LEGENDARIO',c:'#ffcf3f'}];
 const PARTS=[
@@ -1242,7 +1260,7 @@ const old=el.querySelector('.llist'),st=old?old.scrollTop:0,lab=eq?'EQUIPADO':o?
 const tag=k=>cur===k.id?'<em class="g">EN USO</em>':owned.includes(k.id)?'<em>USAR</em>':isSec(k)?'<em class="d">🔒 ???</em>':lvOf(xp)<LVREQ[k.id]?'<em class="d">🔒 NIV '+LVREQ[k.id]+'</em>':'<em class="y">'+k.price.toLocaleString('es')+' ●</em>';
 el.innerHTML=pmode?paintHTML(c,o,eq):`<div class="lh"><span>GARAJE</span><b>${Math.floor(money).toLocaleString('es')} <i>●</i></b></div><div class="llist">${CARS.map(k=>`<div class="lc${k.id===pv?' on':''}" data-l="sel" data-id="${k.id}"><div class="th">${TH[k.id]?`<img src="${TH[k.id]}">`:isSec(k)?'<span style="font:800 26px DM Sans;color:#5b7a93">?</span>':'<span>🚗</span>'}</div><div class="li"><b>${isSec(k)?'???':k.n}</b><small>${isSec(k)?'??? CV · ??? KM/H':k.hp+' CV · '+k.top+' KM/H'}</small><div class="mb"><i style="width:${isSec(k)?0:Math.min(100,k.top/4.2)|0}%"></i></div></div>${tag(k)}</div>`).join('')}</div><div class="lf"><div class="lr"><small>VELOCIDAD</small><div class="lb"><i style="width:${c.max/3.9}%"></i></div></div><div class="lr"><small>ACELERACIÓN</small><div class="lb"><i style="width:${Math.min(100,c.acc*50)}%"></i></div></div><div class="lst"><span>x${c.mult} moneda</span><span>${(pparts[c.id]||[]).length}/${PARTS.length} partes</span></div><div class="lbs"><button class="main${eq||lk?' off':''}" data-l="pick">${lab}</button><button data-l="paint">🎨 Pintura</button><button data-l="shop">🛒 Tienda</button></div></div>`;
 const ls=el.querySelector('.llist');ls.scrollTop=st;const it=ls.querySelector('.on');if(it){const t=it.offsetTop,b=t+it.offsetHeight;if(t<ls.scrollTop)ls.scrollTop=t-4;else if(b>ls.scrollTop+ls.clientHeight)ls.scrollTop=b-ls.clientHeight+4}
-$('lnav').innerHTML=`<button class="arr" data-l="prev">‹</button><div class="nm"><b>${isSec(c)?'???':c.n}</b><small>${isSec(c)?'🔒 Misión secreta · velocidad legendaria':(i+1)+' / '+CARS.length+(eq?' · EN USO':'')}</small></div><button class="arr" data-l="next">›</button>`}
+$('lnav').innerHTML=`<button class="arr" data-l="prev">‹</button><div class="nm"><b>${isSec(c)?'???':c.n}</b><small>${isSec(c)?(c.sec===2?'🔒 Misión secreta · resistencia legendaria':'🔒 Misión secreta · velocidad legendaria'):(i+1)+' / '+CARS.length+(eq?' · EN USO':'')}</small></div><button class="arr" data-l="next">›</button>`}
 function thTick(){if(!lobby||thFbo===0)return;for(const c of CARS){if(TH[c.id]||TF[c.id])continue;if(isSec(c)){const s=SECG[c.id];if(!s)continue;if(s.fail){TF[c.id]=1;continue}thumb(c.id,s,1);freeSec(c.id);renderL();return}const m=models[c.id];if(m&&m.fail){TF[c.id]=1;continue}if(m&&m.ready){thumb(c.id);renderL();return}}}
 function thumb(id,mdIn,sil){const md=mdIn||models[id],N=160;TF[id]=1;try{
 if(!thFbo){thT=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,thT);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,N,N,0,gl.RGBA,gl.UNSIGNED_BYTE,null);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);const d=gl.createRenderbuffer();gl.bindRenderbuffer(gl.RENDERBUFFER,d);gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,N,N);thFbo=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,thFbo);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,thT,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,d)}
@@ -1844,7 +1862,7 @@ $('mt').onclick=e=>{if(e.target.closest('#mtgo'))miniClose()};
 
 function frame(now){const raw=(now-(frame.last||now))/1000,fz=(tut.on&&tut.frz)||!!mini||!!photoFrz;if(fz)tOff+=raw;T=now/1000-tOff;let dt=Math.min(.05,raw);frame.last=now;update(fz?0:dt);cineUpdate(now);verts.length=0;mdraw.length=0;scenery();hqTick();draw();if(capReq)doCap();thTick();requestAnimationFrame(frame)}requestAnimationFrame(frame);
 /* ===== TRUCOS (consola F12): cheat.money(n) · cheat.level(n) · cheat.car('koenigsegg_jesko') · cheat.all() ===== */
-window.cheat={money(n){money+=n||1e6;sv();renderG();renderL();return Math.floor(money)},level(n){xp=Math.max(xp,xpAt(n||30));saveP();renderL();renderP();return lvOf(xp)},car(id){const c=CARS.find(x=>x.id===id);if(!c)return CARS.map(x=>x.id);if(!owned.includes(id))owned.push(id);cur=id;CS=c;pv=id;sv();renderG();renderL();renderP();return c.n},all(){CARS.forEach(c=>{if(!owned.includes(c.id))owned.push(c.id)});sv();saveP();try{localStorage.setItem('curvaSec','1')}catch(e){}location.reload()}};
+window.cheat={money(n){money+=n||1e6;sv();renderG();renderL();return Math.floor(money)},level(n){xp=Math.max(xp,xpAt(n||30));saveP();renderL();renderP();return lvOf(xp)},car(id){const c=CARS.find(x=>x.id===id);if(!c)return CARS.map(x=>x.id);if(!owned.includes(id))owned.push(id);cur=id;CS=c;pv=id;sv();renderG();renderL();renderP();return c.n},all(){CARS.forEach(c=>{if(!owned.includes(c.id))owned.push(c.id)});sv();saveP();try{localStorage.setItem('curvaSec','1');localStorage.setItem('curvaSec2','1')}catch(e){}location.reload()}};
 })();
 </script>
 </body></html>
